@@ -1,37 +1,40 @@
 import React from 'react'
 import { MdStars } from 'react-icons/md'
+import { Link } from 'react-router-dom'
 
 // eslint-disable-next-line react/prop-types
-function DishItemCard({items}) {
+function DishItemCard(info) {
 
   return (
 
     <>
 
-    <div
+    <Link to={`/foodInfo/${info?.link?.split('/')[5]}`}>
+
+       <div
               
-    className='border-4 border-red-600 min-w-full relative rounded-2xl'
+    className='w-72 h-44 relative'
     >
 
       <img
-      
-      className=' w-72 h-44 object-cover shadow-lg rounded-2xl'
-      src= {"https://media-assets.swiggy.com/swiggy/image/upload/" + items?.cloudinaryImageId} />
+
+      className=' w-full h-full object-cover shadow-lg rounded-2xl'
+      src= {"https://media-assets.swiggy.com/swiggy/image/upload/" + info?.cloudinaryImageId} />
 
       <div
       
-      className='bg-gradient-to-t from-black from-5% to-transparent to-40% w-full h-44 rounded-2xl absolute top-0'
+      className='bg-gradient-to-t from-black from-5% to-transparent to-40% w-full h-full rounded-2xl absolute top-0'
       >
 
         <p
         
         className='absolute bottom-0 text-white text-xl font-bold p-2'
-        >{items?.aggregatedDiscountInfoV3?.header + " " + items?.aggregatedDiscountInfoV3?.subHeader}</p>
+        >{  info?.aggregatedDiscountInfoV3 ? info?.aggregatedDiscountInfoV3?.header + " " + info?.aggregatedDiscountInfoV3?.subHeader : ""}</p>
       </div>
 
-    </div>
+       </div>
 
-    <div
+       <div
      
      className='p-2'
      >
@@ -39,7 +42,7 @@ function DishItemCard({items}) {
      <h2
      
      className='text-[#161A1F] line-clamp-1 text-lg font-bold'
-     >{items?.name}</h2>
+     >{info?.name}</h2>
 
     <div className='flex items-center gap-2'>
 
@@ -49,21 +52,24 @@ function DishItemCard({items}) {
      
      className='text-[#161A1F] text-base font-semibold'
      >{
-      items?.avgRating + " " + items?.sla?.slaString
+      info?.avgRating + " " + info?.sla?.slaString
       }</p>
 
     </div>
      <p 
      
      className='line-clamp-1 gap-1 text-[#676A6D] text-base font-semibold'
-     >{items?.cuisines.join(" ,")}</p>
+     >{info?.cuisines?.length > 0 ? info?.cuisines?.join(", ") : " "}</p>
 
      <p
      
      className='text-[#676A6D] text-md font-semibold'
-     >{items?.locality}</p>
+     >{info?.locality}</p>
 
-     </div>
+       </div>
+
+    </Link>
+
 
     </>
 

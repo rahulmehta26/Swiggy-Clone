@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
+import React, { useContext, useEffect, useState } from "react";
 import DishName from "./DishName";
 import RestaurantName from "./RestaurantName";
 import OnlineRestaurant from "./OnlineRestaurant";
+import { GeoCode } from "../Context/ContextApi";
 
 function HeroSection() {
 
@@ -11,9 +14,19 @@ function HeroSection() {
 
   const [onlineResData, setOnlineResData] = useState([])
 
+  const [topAddress, setTopAddress] = useState([])
+
+  const [onlineAddress, setOnlineAddress] = useState([])
+
+  const [serviceData, setServiceData] = useState([])
+
+  const {geoCode : {lat, lng} } = useContext(GeoCode)
+
+  // console.log(lat, lng)
+
   const fetchData = async() => { 
   
-    const data = await fetch("https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.96340&lng=77.58550&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING")
+    const data = await fetch(`https://www.swiggy.com/dapi/restaurants/list/v5?lat=${lat}&lng=${lng}&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING`)
 
     const response = await data.json()
 
@@ -28,6 +41,12 @@ function HeroSection() {
     setDishNameData(dish_result)
 
     setOnlineResData(onlineResData_result)
+
+    setServiceData(response?.data)
+
+    setTopAddress(response?.data?.cards[1]?.card?.card?.header?.title)
+
+    setOnlineAddress(response?.data?.cards[2]?.card?.card?.title)
   
   }
   
@@ -36,7 +55,20 @@ function HeroSection() {
 
     fetchData()
 
-  }, [])
+  }, [lat, lng])
+
+  if(serviceData?.communication){
+
+    return <div className="flex flex-col mt-40 justify-center items-center ">
+
+              <img 
+              src = "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_476,h_476/portal/m/location_unserviceable.png" 
+              className="w-60"
+              />
+
+              <p>Unavaiable Service</p>
+          </div>
+  }
 
   return (
 
@@ -53,14 +85,14 @@ function HeroSection() {
           className='mt-12 mb-10 border'
           />
 
-          <RestaurantName restaurantData = {restaurantData} />
+          <RestaurantName topAddress = {topAddress}  restaurantData = {restaurantData} />
           
           <hr
         
           className='mt-12 mb-10 border'
           />
 
-          <OnlineRestaurant onlineResData = {onlineResData} />
+          <OnlineRestaurant onlineAddress = {onlineAddress} onlineResData = {onlineResData} />
 
           <hr
         

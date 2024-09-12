@@ -1,20 +1,22 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from 'react'
 import { IoIosArrowRoundBack, IoIosArrowRoundForward } from 'react-icons/io';
 import { MdStars } from 'react-icons/md';
 import DishItemCard from './DishItemCard';
 
-function RestaurantName({restaurantData}) {
+function RestaurantName({restaurantData, topAddress}) {
 
     const [imageScroll, setImageScroll] = useState(0);
     
     const handlePrev = () => {
 
-        imageScroll <= 0 ? '' : setImageScroll((prev) => prev - 57.5)
+        imageScroll <= 0 ? '' : setImageScroll((prev) => prev - 70)
       }
   
       const handleNext = () => {
   
-        imageScroll >= 425 ? '' : setImageScroll((prev) => prev + 57.5)
+        imageScroll >= 490 ? '' : setImageScroll((prev) => prev + 70)
       }      
 
   return (
@@ -29,7 +31,7 @@ function RestaurantName({restaurantData}) {
             <h1
             
             className='font-[700] text-2xl text-black'
-            >Top restaurant chains in</h1>
+            >{topAddress}</h1>
 
             <div
 
@@ -93,11 +95,11 @@ function RestaurantName({restaurantData}) {
 
         style={{ translate : `-${imageScroll}%`}}
               
-        className='w-full mt-4 duration-1000 flex gap-8'
+        className='w-72 mt-4 duration-1000 flex gap-8'
         >
 
          {
-            restaurantData &&  restaurantData.map(({info}, i) => {
+            restaurantData &&  restaurantData.map(({info, cta : {link}}, i) => {
 
             return(
               
@@ -107,7 +109,7 @@ function RestaurantName({restaurantData}) {
               className=' hover:scale-95 duration-200 cursor-pointer'
               >
 
-                <DishItemCard items = {info} />
+                <DishItemCard {...info} link = {link} />
 
               </div>
 

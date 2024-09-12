@@ -4,31 +4,7 @@ import { IoIosArrowRoundBack, IoIosArrowRoundForward } from 'react-icons/io';
 // eslint-disable-next-line react/prop-types
 function DishName({dishNameData}) {
 
-    // const [imageData, setImageData] = useState([])
-
     const [imageScroll, setImageScroll] = useState(0);
-
-    // const fetchData = async() => { 
-  
-    //   const data = await fetch("https://www.swiggy.com/dapi/restaurants/list/v5?lat=12.96340&lng=77.58550&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING")
-  
-    //   const response = await data.json()
-
-    //   const result = response?.data?.cards[0]?.card?.card?.imageGridCards?.info
-  
-    //   // console.log(result)
-
-    //   setImageData(result)
-  
-    // }
-  
-    // useEffect(() => {
-  
-    //   fetchData()
-  
-    // }, [])
-
-    // console.log(dish_result)
 
     const handlePrev = () => {
 
@@ -122,11 +98,11 @@ function DishName({dishNameData}) {
         {
         
         // eslint-disable-next-line react/prop-types
-        dishNameData && dishNameData.map((item, i) => (
+        dishNameData?.map((item, i) => (
             
             <img
             className='w-36'
-            key={i} src={`https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/${item.imageId}`} alt={item.imageId} />
+            key={i} src={`https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_288,h_360/${item?.imageId}`} alt={item?.imageId} />
         ))}
         </div>
 
