@@ -4,11 +4,7 @@
 import React from "react";
 import { IoIosArrowRoundBack, IoIosArrowRoundForward } from "react-icons/io";
 
-const Heading = ({text, textStyle}) => {
-
-  const handlePrev = () => {};
-
-  const handleNext = () => {};
+const Heading = ({text, textStyle, onPrev, onNext}) => {
 
   return (
 
@@ -24,13 +20,13 @@ const Heading = ({text, textStyle}) => {
         <div className="flex gap-2">
 
           <div className="flex justify-center bg-[#D9DADB] w-8 h-8 rounded-full">
-            <button onClick={handlePrev}>
+            <button onClick={onPrev}>
               <IoIosArrowRoundBack className="size-[1.7rem] " />
             </button>
           </div>
 
           <div className="flex justify-center bg-[#D9DADB] w-8 h-8 rounded-full">
-            <button onClick={handleNext}>
+            <button onClick={onNext}>
               <IoIosArrowRoundForward className="size-[1.7rem] " />
             </button>
           </div>

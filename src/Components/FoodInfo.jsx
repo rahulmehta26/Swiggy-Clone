@@ -3,24 +3,17 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-unused-vars */
-import React, { useContext, useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 import { BiSolidDownArrow } from "react-icons/bi";
-import {
-  IoIosArrowDown,
-  IoIosArrowRoundBack,
-  IoIosArrowRoundForward,
-  IoIosArrowUp,
-} from "react-icons/io";
+import {IoIosArrowRoundBack,IoIosArrowRoundForward,} from "react-icons/io";
 import { MdStars } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import DiscountCard from "./DiscountCard";
 import { IoSearchOutline } from "react-icons/io5";
-import { FaStar } from "react-icons/fa";
-import { nonVeg, veg } from "../image";
-import Heading from "./Heading";
-import { CartData, GeoCode } from "../Context/ContextApi";
 import TopPicks from "./TopPicks";
 import MenuCard from "./MenuCard";
+import { useSelector } from "react-redux";
+import { FoodInfoLoader } from "./SkeletonLoader";
 
 function FoodInfo() {
   const { id } = useParams();
@@ -33,9 +26,8 @@ function FoodInfo() {
   const [offerData, setOfferData] = useState([]);
   const [imageScroll, setImageScroll] = useState(0);
 
-  const {
-    geoCode: { lat, lng },
-  } = useContext(GeoCode);
+  const {lat, lng} = useSelector((state) => state.geoCodeSlice )
+
 
   const handlePrev = () => {
     imageScroll <= 0 ? "" : setImageScroll((prev) => prev - 70);
@@ -72,7 +64,7 @@ function FoodInfo() {
 
     setMenuData(Menudata);
 
-    // console.log(TopPick);
+    //  (TopPick);
   };
 
   useEffect(() => {
@@ -81,15 +73,18 @@ function FoodInfo() {
 
   return (
     <>
-      <div className="w-full">
+
+    {
+      menuData?.length ? (
+        <div className="w-full">
         <div className="w-[52rem] mx-auto p-8">
           <p className="text-[0.625rem] font-medium text-slate-400">
             <Link to={"/"}>
               <span>Home</span>
             </Link>{" "}
-            /{" "}
+            / {" "}
             <Link>
-              <span>{resData?.city}</span>
+              <span>{resData?.city} </span>
             </Link>
             / <span>{resData?.name}</span>
           </p>
@@ -217,7 +212,7 @@ function FoodInfo() {
             </div>
           </div>
 
-          {topPickData && <TopPicks topPickData =  {topPickData} />  }
+          {topPickData && <TopPicks resData = {resData} topPickData =  {topPickData} />  }
 
           <div className="mt-8" >
 
@@ -228,6 +223,9 @@ function FoodInfo() {
           </div>
         </div>
       </div>
+      ) : <FoodInfoLoader/>
+    }
+
     </>
   );
 }

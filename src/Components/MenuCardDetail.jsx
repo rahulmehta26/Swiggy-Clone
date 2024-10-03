@@ -1,16 +1,21 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react'
 import { nonVeg, veg } from '../image';
 import { FaStar } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCart } from '../Redux/cartSlice';
+import { clearCartItem } from '../Redux/cartSlice'; 
+import AddBtn from './AddBtn';
+import { isSameResToggleReducer } from '../Redux/toggleSlice';
 
 
 function MenuCardDetail({data, isLast, resData , id}) {
 
     const [toggleMore, setToggleMore] = useState({})
 
-    // console.log(resData)
+    const isResSame = useSelector((state) => state.toggleSlice.isSameResToggle )
+
+    //  (resData)
 
     const {
         defaultPrice,
@@ -33,41 +38,31 @@ function MenuCardDetail({data, isLast, resData , id}) {
       };
 
     const isToggled = toggleMore[id];
-
-    const cartData = useSelector((state) => state.cartSlice.cartItems )
-
-    const resDataInfo = useSelector((state) => state.cartSlice.resData )  
     
-    const disPatch = useDispatch()
+    const dispatch = useDispatch();
 
-    const handleAddToCart = () => {
+    const handleResSameData = () => {
 
-      const isPresent = cartData.find((val) => val.id === data.id )
+      dispatch(isSameResToggleReducer())
+    }
 
-      // const resDataInfo = JSON.parse(localStorage.getItem("resData")) || []
+    const handleClearCart = () => {
 
-      if (!isPresent) {
+      dispatch(clearCartItem())
 
-        if(resDataInfo.name === resData.name && resDataInfo.areaName === resData.areaName || resDataInfo.length === 0 ){
-
-            disPatch(addToCart({data, resData}))
-
-        } else{
-          alert("Different restaurant item")
-        }
-
-      } else {
-
-        alert("Already item added")
-        
-      }
-
+      handleResSameData()
+  
+      // localStorage.clear()
     }
 
   return (
 
     <>
-    
+
+    <div 
+    className='w-full relative' 
+    >
+
       <div key={id} className='w-full flex justify-between mt-6 mb-12 items-center'>
 
         <div className='w-[70%]' >
@@ -139,14 +134,18 @@ function MenuCardDetail({data, isLast, resData , id}) {
                     />
                   )}
 
-                  <button
-                    className={` w-[7.5rem] ml-4 p-1 ${
-                      imageId && "absolute ml-0 top-[83%] left-[0%]"
-                    } bg-white border rounded-lg shadow-md text-[#1BA672] text-lg font-bold `}
-                    onClick={handleAddToCart}
-                  >
-                    ADD
-                  </button>
+                  <div className={`${
+                      imageId && "absolute ml-0 top-[83%] left-[9.5%]"
+                    }`}>
+
+                     <AddBtn 
+                        handleResSameData = {handleResSameData} 
+                        data = {data} 
+                        resData = {resData}
+                        customStyle='w-[7.5rem]'
+                        />
+                  </div >
+
             
         </div>
 
@@ -156,8 +155,43 @@ function MenuCardDetail({data, isLast, resData , id}) {
            !isLast &&   <hr className="border" />
 
       }
-      
 
+     {   isResSame && 
+     
+      <div 
+      className='w-[33rem] p-7 space-y-8 shadow-2xl bg-white z-10 fixed left-[33%] bottom-10'
+      style={{ boxShadow: '0 0 25px rgba(0, 0, 0, 0.3)' }}
+      >
+
+        <div>
+
+          <h1
+           className='text-[#282C3F] text-lg font-bold'
+          >Items already in cart</h1>
+
+          <p className='text-[.8rem] text-[#93959F]'>Your cart contains items from other restaurant. Would you like to reset your cart for adding items from this restaurant?</p>
+        </div>
+
+        <div className='w-full gap-x-5 flex justify-between'>
+
+          <button 
+          className='w-1/2 border-2 border-[#60B246] p-[.7rem] text-[#60B246] font-bold'
+          onClick={handleResSameData}
+          >No</button>
+
+          <button
+          className='w-1/2 p-[.7rem] bg-[#60B246] text-white font-bold'
+          onClick={handleClearCart}
+          >YES, START AFRESH</button>
+
+        </div>
+
+      </div>
+      
+      }
+
+     </div>
+      
     </>
 
   )

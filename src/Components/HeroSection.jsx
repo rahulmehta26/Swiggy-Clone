@@ -4,105 +4,135 @@ import React, { useContext, useEffect, useState } from "react";
 import DishName from "./DishName";
 import RestaurantName from "./RestaurantName";
 import OnlineRestaurant from "./OnlineRestaurant";
-import { GeoCode } from "../Context/ContextApi";
+import { useDispatch, useSelector } from "react-redux";
+import SkeletonLoader from "./SkeletonLoader";
+import { setOfferData } from "../Redux/offerSlice";
 
 function HeroSection() {
-
-  const [restaurantData, setRestaurantData] = useState([])
-
-  const [dishNameData, setDishNameData] = useState([])
-
-  const [onlineResData, setOnlineResData] = useState([])
-
-  const [topAddress, setTopAddress] = useState([])
-
-  const [onlineAddress, setOnlineAddress] = useState([])
-
-  const [serviceData, setServiceData] = useState([])
-
-  const {geoCode : {lat, lng} } = useContext(GeoCode)
-
-  // console.log(lat, lng)
-
-  const fetchData = async() => { 
   
-    const data = await fetch(`https://www.swiggy.com/dapi/restaurants/list/v5?lat=${lat}&lng=${lng}&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING`)
+  const [restaurantData, setRestaurantData] = useState([]);
 
-    const response = await data.json()
+  const [dishNameData, setDishNameData] = useState([]);
 
-    const resdata_result = response?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants;
+  const [onlineResData, setOnlineResData] = useState([]);
 
-    const dish_result = response?.data?.cards[0]?.card?.card?.imageGridCards?.info;
+  const [topAddress, setTopAddress] = useState([]);
 
-    const onlineResData_result = response?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle?.restaurants;
+  const [onlineAddress, setOnlineAddress] = useState([]);
 
-    setRestaurantData(resdata_result)
+  const [serviceData, setServiceData] = useState([]);
 
-    setDishNameData(dish_result)
+  const { lat, lng } = useSelector((state) => state.geoCodeSlice);
 
-    setOnlineResData(onlineResData_result)
+  const dispatch = useDispatch()
 
-    setServiceData(response?.data)
+  const fetchData = async () => {
+    const data = await fetch(
+      `https://www.swiggy.com/dapi/restaurants/list/v5?lat=${lat}&lng=${lng}&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING`
+    );
 
-    setTopAddress(response?.data?.cards[1]?.card?.card?.header?.title)
+    const response = await data.json();
 
-    setOnlineAddress(response?.data?.cards[2]?.card?.card?.title)
-  
-  }
-  
+    const resdata_result =
+      response?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
+        ?.restaurants;
+
+    const dish_result =
+      response?.data?.cards[0]?.card?.card?.imageGridCards?.info;
+
+    const onlineResData_result =
+      response?.data?.cards[1]?.card?.card?.gridElements?.infoWithStyle
+        ?.restaurants;
+
+    setRestaurantData(resdata_result);
+
+    setDishNameData(dish_result);
+
+    setOnlineResData(onlineResData_result);
+
+    setServiceData(response?.data);
+
+    setTopAddress(response?.data?.cards[1]?.card?.card?.header?.title);
+
+    setOnlineAddress(response?.data?.cards[2]?.card?.card?.title);
+  };
+
+  dispatch(setOfferData(onlineResData))
 
   useEffect(() => {
+    fetchData();
+  }, [lat, lng]);
 
-    fetchData()
+  const filterValue = useSelector((state) => state.filterSlice.filterValue);
 
-  }, [lat, lng])
+  const filteredData = restaurantData?.filter((data) => {
+    if (!filterValue) return true;
 
-  if(serviceData?.communication){
+    switch (filterValue) {
+      case "Ratings 4.0+":
+        return data?.info?.avgRating >= 4;
+      case "Offers":
+        return data?.info?.aggregatedDiscountInfoV3?.subHeader ? true : false;
+      case "Rs. 300 - 400":
+        return (
+          data?.info?.costForTwo?.split("")[0]?.slice(1) >= 300 &&
+          data?.info?.costForTwo?.split("")[0]?.slice(1) <= 600
+        );
+      case "Less than 300":
+        return data?.info?.costForTwo?.split("")[0]?.slice(1) <= 300;
+      case "New on swiggy":
+        return;
+      case "Pure veg":
+        return;
+      case "Fast Delivery":
+        return;
+      default:
+        return true;
+    }
+  });
 
-    return <div className="flex flex-col mt-40 justify-center items-center ">
+  if (serviceData?.communication) {
+    return (
+      <div className="flex flex-col mt-40 justify-center items-center ">
+        <img
+          src="https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_476,h_476/portal/m/location_unserviceable.png"
+          className="w-60"
+        />
 
-              <img 
-              src = "https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_476,h_476/portal/m/location_unserviceable.png" 
-              className="w-60"
-              />
-
-              <p>Unavaiable Service</p>
-          </div>
+        <p>Unavaiable Service</p>
+      </div>
+    );
   }
 
   return (
-
     <>
+      <div className="w-full">
+        { !onlineResData?.length ? (
+          <SkeletonLoader />
+        ) : (
+          <div className="flex justify-center mt-4">
+            <div className="w-[75%] overflow-hidden">
+              <DishName dishNameData={dishNameData} />
 
-      <div className="w-full flex justify-center mt-4">
+              <hr className="mt-12 mb-10 border" />
 
-        <div className="w-[75%] overflow-hidden">
+              <RestaurantName
+                topAddress={topAddress}
+                restaurantData={restaurantData}
+              />
 
-          <DishName dishNameData = {dishNameData}/>
+              <hr className="mt-12 mb-10 border" />
 
-          <hr
-        
-          className='mt-12 mb-10 border'
-          />
+              <OnlineRestaurant
+                onlineAddress={onlineAddress}
+                onlineResData={filterValue ? filteredData : onlineResData}
+              />
 
-          <RestaurantName topAddress = {topAddress}  restaurantData = {restaurantData} />
-          
-          <hr
-        
-          className='mt-12 mb-10 border'
-          />
-
-          <OnlineRestaurant onlineAddress = {onlineAddress} onlineResData = {onlineResData} />
-
-          <hr
-        
-          className='mt-12 mb-10 border'
-          />
-
-        </div>
-
+              <hr className="mt-12 mb-10 border" />
+            </div>
+          </div>
+        )}
       </div>
-
     </>
   );
 }

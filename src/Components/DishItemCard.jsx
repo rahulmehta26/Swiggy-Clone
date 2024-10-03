@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react'
 import { MdStars } from 'react-icons/md'
 import { Link } from 'react-router-dom'
@@ -13,7 +14,7 @@ function DishItemCard(info) {
 
        <div
               
-    className='w-72 h-44 relative'
+    className='w-[16rem] h-44 relative'
     >
 
       <img

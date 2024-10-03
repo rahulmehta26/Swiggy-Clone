@@ -4,26 +4,23 @@ import { Route, Routes } from "react-router-dom";
 import Header from "./Components/Header";
 import HeroSection from "./Components/HeroSection";
 import FoodInfo from "./Components/FoodInfo";
-import { CartData, GeoCode, Visibility } from "./Context/ContextApi";
-import { useEffect, useState } from "react";
 import Cart from "./Components/Cart";
 import { useSelector } from "react-redux";
+import SigninPage from "./Components/SigninPage";
+import SearchPage from "./Components/SearchPage";
+import Offers from "./Components/Offers";
+import Help from "./Components/Help";
 
 function App() {
 
   const isVisibile = useSelector((state) => state.toggleSlice.searchBarToggle )
 
-  const [geoCode, setGeoCode] = useState({
-    lat: 15.1393932,
-    lng: 76.9214428,
-  });
+  const loginVisible = useSelector((state) => state.toggleSlice.loginToggle )
 
   return (
 
-      <GeoCode.Provider value={{ geoCode, setGeoCode }}>
-
           <div
-            className={`${isVisibile ? "max-h-screen overflow-hidden" : ""}`}
+            className={` ${isVisibile || loginVisible ? "max-h-screen overflow-hidden" : ""}`}
           >
 
             <Routes>
@@ -36,6 +33,14 @@ function App() {
 
                 <Route path = "/cart" element = {<Cart/>} />
 
+                <Route path = "/my-account" element = {<SigninPage/>} />
+
+                <Route path = "/search" element = {<SearchPage/>} />
+
+                <Route path = "/offers" element = {<Offers/>} />
+
+                <Route path = "/support" element = {<Help/>} />
+
                 <Route path="*" element = {<h1>Page not found 404</h1>} />
 
               </Route>
@@ -43,8 +48,6 @@ function App() {
             </Routes>
 
           </div>
-
-      </GeoCode.Provider>
 
   );
 }

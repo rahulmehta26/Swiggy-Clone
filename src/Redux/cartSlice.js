@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { createSlice } from "@reduxjs/toolkit";
 
 const cartSlice = createSlice({
@@ -9,13 +10,15 @@ const cartSlice = createSlice({
        resData: JSON.parse(localStorage.getItem("resData")) || [],
     },
 
-    reducer:{
+    reducers :{
 
         addToCart : (state, action) => {
 
             const {data, resData} = action.payload;
 
             state.cartItems = [...state.cartItems, data ]
+
+            state.resData = resData
   
             localStorage.setItem("cartData", JSON.stringify(state.cartItems) )
   
@@ -23,13 +26,16 @@ const cartSlice = createSlice({
         },
         deleteItem : (state, action) => {
 
-            state.cartItems = [action.payload]
+            state.cartItems = action.payload
 
             localStorage.setItem("cartData", JSON.stringify(action.payload) )
 
         },
         clearCartItem : (state, action) => {
+
             state.cartItems = []
+
+            state.resData = []
 
             localStorage.removeItem("cartData" )
   
@@ -40,6 +46,6 @@ const cartSlice = createSlice({
 
 })
 
-export const {addToCart, deleteItem, clearCartItem} = cartSlice.actions
+export const { addToCart, deleteItem, clearCartItem } = cartSlice.actions
 
-export default cartSlice.reducer
+export default cartSlice.reducer;

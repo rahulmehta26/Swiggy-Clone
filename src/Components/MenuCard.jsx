@@ -77,7 +77,7 @@ function MenuCard({ card, catTitle, lastLine, resData, titleStyle }) {
 
         const {title, categories} = card
 
-        // console.log(title)
+        //  (title)
 
         return(
 
