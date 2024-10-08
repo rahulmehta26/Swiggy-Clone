@@ -7,6 +7,8 @@ import OnlineRestaurant from "./OnlineRestaurant";
 import { useDispatch, useSelector } from "react-redux";
 import SkeletonLoader from "./SkeletonLoader";
 import { setOfferData } from "../Redux/offerSlice";
+import Footer from "./Footer";
+import HoverCard from "./HoverCard";
 
 function HeroSection() {
   
@@ -106,10 +108,12 @@ function HeroSection() {
 
   return (
     <>
-      <div className="w-full">
+      <div className="w-full ">
         { !onlineResData?.length ? (
           <SkeletonLoader />
         ) : (
+
+          <div className="h-screen  flex flex-col justify-between ">
           <div className="flex justify-center mt-4">
             <div className="w-[75%] overflow-hidden">
               <DishName dishNameData={dishNameData} />
@@ -130,9 +134,15 @@ function HeroSection() {
 
               <hr className="mt-12 mb-10 border" />
             </div>
+
+            </div>
+             <Footer />
           </div>
         )}
+
       </div>
+
+
     </>
   );
 }

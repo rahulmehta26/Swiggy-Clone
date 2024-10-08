@@ -10,6 +10,7 @@ import SigninPage from "./Components/SigninPage";
 import SearchPage from "./Components/SearchPage";
 import Offers from "./Components/Offers";
 import Help from "./Components/Help";
+import ErrorPage from "./Components/ErrorPage";
 
 function App() {
 
@@ -41,7 +42,7 @@ function App() {
 
                 <Route path = "/support" element = {<Help/>} />
 
-                <Route path="*" element = {<h1>Page not found 404</h1>} />
+                <Route path="*" element = {<ErrorPage />} />
 
               </Route>
 

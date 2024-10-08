@@ -4,7 +4,10 @@
 import React from "react";
 import { IoIosArrowRoundBack, IoIosArrowRoundForward } from "react-icons/io";
 
-const Heading = ({text, textStyle, onPrev, onNext}) => {
+const Heading = ({text, textStyle, onPrev, onNext, currentSlide, totalItems, slidesToShow}) => {
+
+  const isAtStart = currentSlide === 0;
+  const isAtEnd = currentSlide >= totalItems - slidesToShow;
 
   return (
 
@@ -19,15 +22,29 @@ const Heading = ({text, textStyle, onPrev, onNext}) => {
 
         <div className="flex gap-2">
 
-          <div className="flex justify-center bg-[#D9DADB] w-8 h-8 rounded-full">
+          <div className= {`flex justify-center ${
+            isAtStart ? 'bg-[#E9E9EA]' : 'bg-[#D9DADB]'
+          } w-8 h-8 rounded-full`} >
+
             <button onClick={onPrev}>
-              <IoIosArrowRoundBack className="size-[1.7rem] " />
+
+              <IoIosArrowRoundBack className={`size-[1.7rem]  ${
+            isAtStart ? 'text-[#909194]' : 'text-[#23262B]'
+          } `} />
+
             </button>
           </div>
 
-          <div className="flex justify-center bg-[#D9DADB] w-8 h-8 rounded-full">
+          <div className= {`flex justify-center ${
+            isAtEnd ? 'bg-[#E9E9EA]' : 'bg-[#D9DADB]'
+          } w-8 h-8 rounded-full`} >
+
             <button onClick={onNext}>
-              <IoIosArrowRoundForward className="size-[1.7rem] " />
+
+              <IoIosArrowRoundForward className={`size-[1.7rem]  ${
+            isAtEnd ? 'text-[#909194]' : 'text-[#23262B]'
+          } `} />
+
             </button>
           </div>
         </div>

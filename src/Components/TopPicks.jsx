@@ -1,15 +1,20 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { useState } from "react";
 import Heading from "./Heading";
 import AddBtn from "./AddBtn";
 import { isSameResToggleReducer } from "../Redux/toggleSlice";
 import { clearCartItem } from "../Redux/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 function TopPicks({topPickData, resData }) {
 
+  const [slider, setSlider] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const isResSame = useSelector((state) => state.toggleSlice.isSameResToggle )
 
   const dispatch = useDispatch()
@@ -28,14 +33,46 @@ function TopPicks({topPickData, resData }) {
   
   }
 
+  const settings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 2.3,
+    slidesToScroll: 1,
+    beforeChange: (oldIndex, newIndex) => setCurrentSlide(newIndex),
+  };
+
+  const handlePrev = () => {
+    if (slider) {
+      slider.slickPrev();
+    }
+  };
+
+  const handleNext = () => {
+    if (slider) {
+      slider.slickNext();
+    }
+  };
+
   return (
     <>
 
       <div className="my-8 w-full px-4">
 
-        <Heading text={topPickData?.card?.card?.title} textStyle={"text-xl"} />
+        <Heading 
+        text={topPickData?.card?.card?.title} 
+        textStyle={"text-xl"}
+        onPrev={handlePrev}
+        onNext={handleNext}
+        currentSlide={currentSlide}
+        totalItems={topPickData.length}
+        slidesToShow={settings.slidesToShow} 
+        />
 
-        <div className="flex mt-4 gap-3 overflow-hidden">
+        <div className=" mt-4 gap-3">
+
+        <Slider ref={(slider) => setSlider(slider)} {...settings}>
+
           {topPickData?.card?.card?.carousel?.map(
             ({
               creativeId,
@@ -48,7 +85,8 @@ function TopPicks({topPickData, resData }) {
               return (
                 <>
                   <div key={index} className="relative">
-                    <div className="w-[19rem] h-[20rem]">
+
+                    <div className="w-[19rem] relative h-[20rem]">
                       <img
                         src={
                           "https://media-assets.swiggy.com/swiggy/image/upload/" +
@@ -56,7 +94,6 @@ function TopPicks({topPickData, resData }) {
                         }
                         className="w-full h-full rounded-2xl object-cover"
                       />
-                    </div>
 
                     <div className="flex justify-between items-center absolute left-0 right-0 bottom-0 px-4 pb-2 ">
                       {info?.price && <p className="text-white">₹{info?.price / 100}</p>}
@@ -64,12 +101,19 @@ function TopPicks({topPickData, resData }) {
                        <AddBtn resData={ resData } data = {dish?.info } handleResSameData = {handleResSameData} />
 
                     </div>
+
+                    </div>
+
                   </div>
                 </>
               );
             }
           )}
+
+        </Slider>
+
         </div>
+
       </div>
 
       {   isResSame && 

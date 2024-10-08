@@ -18,10 +18,13 @@ import {
   swiggyUPIFaqs,
 } from "../Utils/utility";
 import HelpCard from "./HelpCard";
+import useWindowSize from './useWindowSize'
 
 const Help = () => {
   const [isActive, setIsActive] = useState("Help with orders");
   const [activeFAQs, setActiveFAQs] = useState([]);
+
+  const {height} = useWindowSize()
 
   const handleMenuClick = (title) => {
     setIsActive(title);
@@ -102,7 +105,9 @@ const Help = () => {
 
   return (
     <>
-      <div className="w-full p-20 bg-[#37718E] ">
+      <div 
+      className= {`w-full p-20 ${ height >= 180.50 ? "bg-white" : "bg-[#37718E]" }  `}
+      >
         <div className="pl-32">
           <h1 className="text-[1.9rem] text-white font-bold ">
             Help & Support

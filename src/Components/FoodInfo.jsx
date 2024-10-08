@@ -14,6 +14,7 @@ import TopPicks from "./TopPicks";
 import MenuCard from "./MenuCard";
 import { useSelector } from "react-redux";
 import { FoodInfoLoader } from "./SkeletonLoader";
+import SmallFooter from "./SmallFooter";
 
 function FoodInfo() {
   const { id } = useParams();
@@ -27,7 +28,6 @@ function FoodInfo() {
   const [imageScroll, setImageScroll] = useState(0);
 
   const {lat, lng} = useSelector((state) => state.geoCodeSlice )
-
 
   const handlePrev = () => {
     imageScroll <= 0 ? "" : setImageScroll((prev) => prev - 70);
@@ -77,7 +77,11 @@ function FoodInfo() {
     {
       menuData?.length ? (
         <div className="w-full">
-        <div className="w-[52rem] mx-auto p-8">
+
+        <div className="w-[52rem] h-screen flex flex-col relative justify-between mx-auto pt-8 px-8 ">
+
+          <div className="w-full">
+
           <p className="text-[0.625rem] font-medium text-slate-400">
             <Link to={"/"}>
               <span>Home</span>
@@ -221,7 +225,16 @@ function FoodInfo() {
               return <MenuCard key={card.id} resData = {resData} card={card} />;
             })}
           </div>
+
+          </div>
+
+          <div className="w-full">
+
+              <SmallFooter resData = {resData} />
+          </div>
+
         </div>
+
       </div>
       ) : <FoodInfoLoader/>
     }

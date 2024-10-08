@@ -3,7 +3,7 @@
 import { signInWithPopup, signInWithRedirect, signOut } from "firebase/auth";
 import React, { useState } from "react";
 import { auth, provider } from "../Auth/firebaseAuth";
-import { useDispatch, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { addUserInfo, removeUserInfo } from "../Redux/authSlice";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { signinData } from "../Utils/utility";
@@ -15,27 +15,37 @@ import { GoLocation } from "react-icons/go";
 import { removeAddress } from "../Redux/addressSlice";
 import { nonVeg, veg } from "../image";
 import { placeOrder } from "../Redux/orderSlice";
+import useWindowSize from "./useWindowSize";
 
 const SigninPage = () => {
   const [isToggle, setIsToggle] = useState(true);
 
-  const addressData = useSelector((state) => state.addressSlice )
+  const addressData = useSelector((state) => state.addressSlice.addresses);
 
-  const placedOrder = useSelector((state) => state.orderSlice.orders.flat() )
+  const dataAddress = addressData?.flat(Infinity) || []
 
-  const dispatch = useDispatch()
+  const placedOrder = useSelector(
+    (state) => state.orderSlice.orders.flat(),
+    shallowEqual
+  );
+
+  const dispatch = useDispatch();
+
+  const { height } = useWindowSize();
 
   const totalAmount = placedOrder?.reduce((total, items) => {
     return total + items?.price || items?.defaultPrice;
   }, 0);
 
-  const handleRemoveAddress = () => {
-          dispatch(removeAddress())
-  }
+  const handleRemoveAddress = (val) => {
+
+    const exactData = dataAddress.filter((data) => data?.id !== val )
+
+    dispatch(removeAddress(exactData));
+  };
 
   const toggleValue = () => {
     setIsToggle((prev) => !prev);
-
   };
 
   const navigate = useNavigate();
@@ -66,13 +76,6 @@ const SigninPage = () => {
     return navigate("/");
   }
 
-  // const handleSignOut = async() => {
-
-  //     await signOut(auth)
-  //     dispatch(removeUserInfo())
-
-  // }
-
   return (
     <>
       {isActive === "Favourites" ? (
@@ -99,22 +102,21 @@ const SigninPage = () => {
         </div>
       ) : (
         <>
-          <div className="w-full p-20 bg-[#37718E] ">
-
-            <div 
-            className="flex justify-between items-center px-32"
-            >
-
+          <div
+            className={`w-full p-20 ${
+              height >= 180.5 ? "bg-white" : "bg-[#37718E]"
+            } `}
+          >
+            <div className="flex justify-between items-center px-32">
               <div>
+                <h1 className="text-white font-bold text-[1.8rem] ">
+                  {userInfo.name}
+                </h1>
 
-                <h1
-                className="text-white font-bold text-[1.8rem] "
-                >{userInfo.name}</h1>
-
-                  <h3
-                  className="text-white font-normal text-[1.1rem]"
-                  > phone number <span> email address</span> </h3>
-
+                <h3 className="text-white font-normal text-[1.1rem]">
+                  {" "}
+                  phone number <span> email address</span>{" "}
+                </h3>
               </div>
 
               <div>
@@ -122,11 +124,9 @@ const SigninPage = () => {
                   EDIT PROFILE
                 </button>
               </div>
-
             </div>
 
             <div className="w-[90%] flex justify-between mt-10 p-12 mx-auto bg-white">
-
               <div className="w-[17rem] flex flex-col items-end py-6 h-[36rem] bg-[#EDF1F7] ">
                 {signinData?.map((data) => {
                   const IconItems = iconList[data.image];
@@ -170,93 +170,89 @@ const SigninPage = () => {
               </div>
 
               <div className="w-[75%] pl-10">
-                {isActive === "Orders" ? (  
- 
+                {isActive === "Orders" ? (
                   placedOrder.length ? (
-
                     <div className="w-[100%] mt-10">
+                      <h1 className="text-[1.5rem] font-bold text-[#282C3F] ">
+                        All orders
+                      </h1>
 
-                      <h1
-                      className="text-[1.5rem] font-bold text-[#282C3F] "
-                      >All orders</h1>
+                     <Link to={`/`} >
+                      <div className="mt-6">
+                        {placedOrder?.map((data, index) => {
+                          return (
+                            <div
+                              key={index}
+                              className="flex justify-between mb-12 items-center"
+                            >
+                              <div className="flex gap-x-4">
+                                <div className="w-36 h-28">
+                                  {data?.imageId && (
+                                    <img
+                                      src={
+                                        "https://media-assets.swiggy.com/swiggy/image/upload/" +
+                                        data?.imageId
+                                      }
+                                      className="w-full h-full  object-cover"
+                                      alt="food-item"
+                                    />
+                                  )}
+                                </div>
 
-                      <div className="mt-6" >
+                                <div>
+                                  <img
+                                    src={
+                                      data?.itemAttribute?.vegClassifier ===
+                                      "veg"
+                                        ? veg
+                                        : nonVeg
+                                    }
+                                    className="w-4 h-4"
+                                  />
 
-                    {placedOrder?.map((data, index) => {
-                      return (
-                        <div
-                          key={index}
-                          className="flex justify-between mb-12 items-center"
-                        >
-      
-                          <div className="flex gap-x-4" >
-      
-                          <div className="w-20 h-16">
-                            {data?.imageId && (
-                              <img
-                                src={
-                                  "https://media-assets.swiggy.com/swiggy/image/upload/" +
-                                  data?.imageId
-                                }
-                                className="w-full h-full rounded-xl object-cover"
-                                alt="food-item"
-                              />
-                            )}
-      
-                          </div>
-      
-                          <div>
-      
-                           <img 
-                           src={data?.itemAttribute?.vegClassifier === "veg" ? veg : nonVeg }  
-                           className="w-4 h-4"
-                           />
-      
-                          <h1
-                          className="text-[#161A1F] font-medium text-[1rem] "
-                          >{data?.name || data?.resName}</h1>
-                          </div>
-      
-      
-                          </div>
-      
-                          {
-                          data.price && 
-                          <p
-                          className="font-bold text-[#161A1F]"
-                          >₹ {data?.price / 100}</p>}
-      
-                        </div>
-                      );
-                    })}
+                                  <h1 className="text-[#161A1F] font-medium text-[1rem] ">
+                                    {data?.name || data?.resName}
+                                  </h1>
+                                </div>
+                              </div>
+
+                              {data.price && (
+                                <p className="font-bold text-[#161A1F]">
+                                  ₹ {data?.price / 100}
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
 
-      
-                    <h1 
-                    className="text-[1rem] text-[#161A1F] text-right font-medium "
-                    >Total Amount:-  <span className="text-[#1C923C] font-bold ">₹ {totalAmount / 100}</span> </h1>
-      
-                  </div>
-                  ) : (
+                      </Link>
 
+                      <h1 className="text-[1rem] text-[#161A1F] text-right font-medium ">
+                        Total Amount:-{" "}
+                        <span className="text-[#1C923C] font-bold ">
+                          ₹ {totalAmount / 100}
+                        </span>{" "}
+                      </h1>
+                    </div>
+                  ) : (
                     <div className="flex flex-col justify-center items-center">
                       <img
                         src="https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,h_262/empty-orders-image_acrbbw"
                         className="w-[24rem] h-[24rem] object-contain"
                       />
-  
+
                       <div>
                         <h1 className="text-center text-[1.25rem] font-bold text-[#535665] ">
                           No Orders
                         </h1>
-  
+
                         <p className="text-center text-[#7E808C] text-[.9rem] ">
                           You haven't placed any order yet.
                         </p>
                       </div>
                     </div>
-                  )    
-
+                  )
                 ) : (
                   " "
                 )}
@@ -326,55 +322,46 @@ const SigninPage = () => {
                       Manage Addresses
                     </h1>
 
-                    {
-                      addressData.area &&
+                    <div className="flex w-[80%] flex-wrap justify-between">
+                      {dataAddress &&
+                        dataAddress?.map((data, index) => {
+                          return (
+                            <div
+                              key={index}
+                              className="w-[35%]  bg-white pt-4 px-4"
+                            >
+                              <div className="w-[22rem] flex flex-col space-y-8 justify-between border border-dashed border-[#E9E9EB] hover:shadow-lg p-4">
+                                <div className="flex  gap-x-6">
+                                  <GoLocation className="w-5 h-5" />
 
-                    <div className="w-[35%]  bg-white p-4">
-                    <div
-                      className="w-[22rem] h-[14rem] flex flex-col justify-between border border-dashed border-[#E9E9EB] hover:shadow-lg p-4"
-                    >
-                      <div className="flex  gap-x-6">
-                      <GoLocation className="w-5 h-5" />
-      
-                      <div>
-      
-                        <h1 className="text-[.85rem] font-medium text-[#93959F] ">
-                          {addressData.area} <span> {addressData.zipCode}</span>
-                        </h1>
-      
-                      <p
-                      className="text-[#93959F] mt-2 font-medium text-[.85rem] "
-                      >{addressData.landmark}</p>
-      
-                      </div>
-      
-                      </div>
-      
-      
-                      <div 
-                      className=" w-full flex justify-between gap-x-4 items-center"
-                      >
-      
-                      <button 
-                      className="w-full text-white bg-[#66B246] mb-8  font-medium border border-[#66B246] p-2"
-                      
-                      >
-                        DELIVER HERE
-                      </button>
-      
-                      <button 
-                      className="w-full text-white bg-[#66B246] mb-8  font-medium border border-[#66B246] p-2"
-                      onClick={handleRemoveAddress}
-                      >
-                        DELETE ADDRESS
-                      </button>
-      
-                      </div>
-        
+                                  <div>
+                                    <h1 className="text-[.85rem] font-medium text-[#93959F] ">
+                                      {data?.area} <span> {data?.zipCode}</span>
+                                    </h1>
+
+                                    <p className="text-[#93959F] mt-2 font-medium text-[.85rem] ">
+                                      {data?.landmark}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <div className=" w-full flex justify-between gap-x-4 items-center">
+                                  <button className="w-full text-white bg-[#66B246]  font-medium border border-[#66B246] p-2">
+                                    DELIVER HERE
+                                  </button>
+
+                                  <button
+                                    className="w-full text-white bg-[#66B246]  font-medium border border-[#66B246] p-2"
+                                    onClick={() => handleRemoveAddress(data.id)}
+                                  >
+                                    DELETE ADDRESS
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
                     </div>
-                  </div>
-                    }
-
                   </div>
                 ) : (
                   " "
@@ -408,9 +395,7 @@ const SigninPage = () => {
                           className={`bg-white w-[1.2rem] h-[1.2rem] text-[.5rem] rounded-full ${
                             isToggle ? "translate-x-6" : "translate-x-0"
                           } duration-700  `}
-                        >
-                          
-                        </p>
+                        ></p>
                       </button>
 
                       <p className=" border h-16 border-t-8 border-[#D4D5D9] "></p>
@@ -429,74 +414,6 @@ const SigninPage = () => {
           </div>
         </>
       )}
-
-       {/* <div className="w-full">
-          <div
-            onClick={handleLoginToggle}
-            className={
-              "w-full bg-black/50 z-30 h-full absolute " +
-              (loginVisible ? "visible " : " invisible")
-            }
-          ></div>
-
-          <div
-            className={
-              "w-[35%] h-full bg-white fixed z-30 duration-500 " +
-              (loginVisible ? "right-0" : "-right-full")
-            }
-          >
-
-            <div className="flex w-[80%] flex-col gap-y-3 py-8 px-9">
-              <RxCross1
-                className="size-[1.15rem] cursor-pointer"
-                onClick={handleLoginToggle}
-              />
-
-               <div className="flex items-center justify-between">
-
-                <div className="space-y-4">
-
-                  <h1 className="text-[#282C3F] font-semibold text-3xl ">Login</h1>
-
-                  <p className="text-[.8rem] font-semibold text-[#282C3F] ">or <span className="text-[#FF5200]">create an account</span> </p>
-
-                  <hr className="w-8 border-2 border-black"/>
-
-                </div>
-
-                <img src="https://media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto/Image-login_btpq7r" 
-                  className="w-28 h-28 object-cover" />
-               </div>
-
-               <input
-                className="w-[23rem] py-6 px-4 border focus:outline-none mt-6 text-black"
-                placeholder="Phone number"
-              />
-
-              <button
-              className="w-[23rem] py-3 px-4 bg-[#FF5200] text-white font-semibold mt-2"
-              >
-                Login
-              </button>
-
-                <p
-                className="text-[.8rem] font-medium text-[#282C3F] text-center "
-                >or login with </p>
-
-              <div className="w-full ">
-
-                <FcGoogle 
-                className="w-8 h-8 mx-auto cursor-pointer"
-                onClick={handleAuthSignin}               
-                />
-
-              </div>
-
-              <p className="text-[.8rem] font-medium text-[#282C3F] cursor-pointer "> <span className="text-[#686B78] cursor-default ">By clicking on Login, I accept the</span> Terms & Conditions & Privacy Policy</p>
-
-            </div>
-          </div>
-        </div> */}
     </>
   );
 };

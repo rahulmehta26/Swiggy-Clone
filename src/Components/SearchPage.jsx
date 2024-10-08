@@ -111,7 +111,7 @@ const SearchPage = () => {
   }, [searchQuery]);
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-white">
       <div className="w-[60%] mx-auto px-8 mt-4">
         <div className="w-full border flex items-center border-[#BEBFC5] rounded-md p-3 ">
           <input
@@ -155,6 +155,9 @@ const SearchPage = () => {
         )}
       </div>
 
+{
+  searchQuery &&
+
       <div className="w-[60%] mx-auto px-8">
         <div className="w-full grid grid-cols-2 gap-x-3 gap-y-4 bg-[#F3F4F5] px-4 py-6">
           {selectedResDish ? (
@@ -194,6 +197,8 @@ const SearchPage = () => {
           )}
         </div>
       </div>
+}
+
     </div>
   );
 };

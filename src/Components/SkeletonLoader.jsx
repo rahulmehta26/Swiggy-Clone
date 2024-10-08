@@ -2,6 +2,7 @@
 import React from "react";
 
 const SkeletonLoader = () => {
+
   return (
     <div className="w-full">
       <div className="w-full flex gap-14 flex-col justify-center items-center  bg-slate-900 h-[19rem]">

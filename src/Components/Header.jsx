@@ -2,7 +2,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import swiggy from "/swiggy.png";
 import { IoIosArrowDown } from "react-icons/io";
 import { HiMiniBuildingOffice } from "react-icons/hi2";
 import { BiSolidOffer } from "react-icons/bi";
@@ -10,7 +9,7 @@ import { MdAssignmentInd } from "react-icons/md";
 import { FaShoppingCart } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 import { IoHelpBuoyOutline } from "react-icons/io5";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { RxCross1 } from "react-icons/rx";
 import { GoLocation } from "react-icons/go";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,8 +24,13 @@ import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../Auth/firebaseAuth";
 import toast from "react-hot-toast";
 import { setSignupData } from "../Redux/signupSlice";
+import HoverCard from "./HoverCard";
+import { SiSwiggy } from "react-icons/si";
+import CartHoverCard from "./CartHoverCard";
+import useHoverCard from "./UseHoverCard";
 
 function Header() {
+
   const iconMapping = {
     HiMiniBuildingOffice: HiMiniBuildingOffice,
     FiSearch: FiSearch,
@@ -101,20 +105,16 @@ function Header() {
   const userInfo = useSelector((state) => state.authSlice.userInfo);
 
   const handleSignup = () => {
-
     if (createAccount && phoneNumber && name && email) {
       const signupData = {
         phoneNumber,
         name,
         email,
       };
-      dispatch(setSignupData(signupData)); 
-      setCreateAccount(false)
-       ("Signup data dispatched:", signupData);
+      dispatch(setSignupData(signupData));
+      setCreateAccount(false);
     } else {
       toast.error("Please fill all the fields before continuing.");
-
-      
     }
   };
 
@@ -149,8 +149,6 @@ function Header() {
     const data = await res.json();
 
     setSearchData(data?.data);
-
-    
   };
 
   const geoCodeData = async (id) => {
@@ -172,12 +170,28 @@ function Header() {
     searchHandle();
 
     setSearchLoc(data?.data[0]?.formatted_address);
-
   };
+
+  const {
+    hoverCardVisible,
+    handleMouseEnter,
+    handleMouseEnterHoverCard,
+    handleMouseLeaveHoverCard,
+    handleMouseLeave,
+  } = useHoverCard();
+
+  
+  const {
+    hoverCardVisible: cartHoverCardVisible,
+    handleMouseEnter: handleMouseEnterCart,
+    handleMouseEnterHoverCard: handleMouseEnterCartHoverCard,
+    handleMouseLeaveHoverCard: handleMouseLeaveCartHoverCard,
+    handleMouseLeave: handleMouseLeaveCart,
+  } = useHoverCard();
 
   return (
     <>
-      <div className="w-full">
+      <div className="w-full relative ">
         <div className="w-full">
           <div
             onClick={searchHandle}
@@ -244,8 +258,8 @@ function Header() {
             <div className="w-[80%] flex items-center justify-between">
               <div className="flex items-center gap-7">
                 <Link to={"/"}>
-                  <div className="size-12 cursor-pointer">
-                    <img className="w-full, h-full" src={swiggy} />
+                  <div className="w-[3rem] cursor-pointer p-2 rounded-xl bg-[#FE5005] ">
+                    <SiSwiggy className="size-8 text-white " />
                   </div>
                 </Link>
 
@@ -285,9 +299,23 @@ function Header() {
                             ? ""
                             : "hover:text-[#FC8019]"
                         } `}
+                        onMouseEnter={
+                          items.name === "Sign In"
+                            ? handleMouseEnter
+                            : (
+                              items.name === "Cart" ? handleMouseEnterCart : null
+                            )
+                        }
+                        onMouseLeave={
+                          items.name === "Sign In"
+                            ? handleMouseLeave
+                            : (
+                              items.name === "Cart" ? handleMouseLeaveCart : null
+                            )
+                        }
                       >
                         <div
-                          className="flex items-center gap-2"
+                          className="flex relative items-center gap-2"
                           onClick={
                             items.name === "Sign In" && userInfo === null
                               ? handleLoginToggle
@@ -311,7 +339,7 @@ function Header() {
 
                           <p className="text-[1.1 rem] hover:text-[#FC8019]">
                             {items.name === "Sign In" && userInfo
-                              ?  signupData.name || userInfo?.name 
+                              ? signupData.name || userInfo?.name
                               : items.name}
                           </p>
                         </div>
@@ -376,57 +404,49 @@ function Header() {
                 />
               </div>
 
-              {
-                !createAccount  &&
+              {!createAccount && (
+                <input
+                  className="w-[23rem] py-6 px-4 border focus:outline-none mt-6 text-black"
+                  placeholder="Phone number"
+                />
+              )}
 
-              <input
-                className="w-[23rem] py-6 px-4 border focus:outline-none mt-6 text-black"
-                placeholder="Phone number"
-              />
-              }
-
-
-              {
-                createAccount && 
-
+              {createAccount && (
                 <>
+                  <input
+                    className="w-[23rem] py-6 px-4 border focus:outline-none mt-6 text-black"
+                    placeholder="Phone number"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                  />
 
-              <input
-                className="w-[23rem] py-6 px-4 border focus:outline-none mt-6 text-black"
-                placeholder="Phone number"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-              />
-                
-                <input
-                className="w-[23rem] py-6 px-4 border focus:outline-none mt-2 text-black"
-                placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+                  <input
+                    className="w-[23rem] py-6 px-4 border focus:outline-none mt-2 text-black"
+                    placeholder="Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
 
-                <input
-                className="w-[23rem] py-6 px-4 border focus:outline-none mt-2 text-black"
-                placeholder="Email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-
+                  <input
+                    className="w-[23rem] py-6 px-4 border focus:outline-none mt-2 text-black"
+                    placeholder="Email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </>
-              }
+              )}
 
-              <button 
-              className="w-[23rem] py-3 px-4 bg-[#FF5200] text-white font-semibold mt-2"
-              onClick={!createAccount ? "" : handleSignup}
+              <button
+                className="w-[23rem] py-3 px-4 bg-[#FF5200] text-white font-semibold mt-2"
+                onClick={!createAccount ? "" : handleSignup}
               >
                 {!createAccount ? "Login" : "Continue"}
               </button>
 
-              {!createAccount && (
-                <>
+
                   <p className="text-[.8rem] font-medium text-[#282C3F] text-center ">
-                    or login with{" "}
+                       {!createAccount ? "or login with " : "Or signup with" }
                   </p>
 
                   <div className="w-full ">
@@ -435,8 +455,7 @@ function Header() {
                       onClick={handleAuthSignin}
                     />
                   </div>
-                </>
-              )}
+
 
               <p className="text-[.8rem] font-medium text-[#282C3F] cursor-pointer ">
                 {" "}
@@ -449,7 +468,31 @@ function Header() {
           </div>
         </div>
 
+        {userInfo && (  
+  <div  
+   className="fixed z-10 top-[11.5%] right-[14%]"  
+   onMouseEnter={ handleMouseEnterHoverCard}  
+   onMouseLeave={ handleMouseLeaveHoverCard}  
+  >  
+   {hoverCardVisible && <HoverCard />}  
+  </div>  
+)}
+
+ {
+   cartHoverCardVisible && (
+    <div  
+    className="fixed z-10 top-[11.5%] right-[10%]" 
+    onMouseEnter={handleMouseEnterCartHoverCard}  
+    onMouseLeave={handleMouseLeaveCartHoverCard}  
+
+   >  
+     <CartHoverCard /> 
+   </div> 
+   )
+ }
+
         <Outlet />
+
       </div>
     </>
   );
