@@ -5,7 +5,6 @@
 /* eslint-disable no-unused-vars */
 import React, {useEffect, useState } from "react";
 import { BiSolidDownArrow } from "react-icons/bi";
-import {IoIosArrowRoundBack,IoIosArrowRoundForward,} from "react-icons/io";
 import { MdStars } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import DiscountCard from "./DiscountCard";
@@ -15,6 +14,10 @@ import MenuCard from "./MenuCard";
 import { useSelector } from "react-redux";
 import { FoodInfoLoader } from "./SkeletonLoader";
 import SmallFooter from "./SmallFooter";
+import Heading from "./Heading";
+import Slider from "react-slick/lib/slider";
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 function FoodInfo() {
   const { id } = useParams();
@@ -25,21 +28,35 @@ function FoodInfo() {
   const [topPickData, setTopPickData] = useState([]);
   const [resData, setResData] = useState([]);
   const [offerData, setOfferData] = useState([]);
-  const [imageScroll, setImageScroll] = useState(0);
+  const [slider, setSlider] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const {lat, lng} = useSelector((state) => state.geoCodeSlice )
 
+  const settings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 2.3,
+    slidesToScroll: 1,
+    beforeChange: (oldIndex, newIndex) => setCurrentSlide(newIndex),
+  };
+
   const handlePrev = () => {
-    imageScroll <= 0 ? "" : setImageScroll((prev) => prev - 70);
+    if (slider) {
+      slider.slickPrev();
+    }
   };
 
   const handleNext = () => {
-    imageScroll >= 490 ? "" : setImageScroll((prev) => prev + 70);
+    if (slider) {
+      slider.slickNext();
+    }
   };
 
   const fetchData = async () => {
     let data = await fetch(
-      `https://www.swiggy.com/mapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=${lat}&lng=${lng}&restaurantId=${mainId}&submitAction=ENTER`
+      `${import.meta.env.VITE_BASE_URLs}/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=${lat}&lng=${lng}&restaurantId=${mainId}&submitAction=ENTER`
     );
 
     let res = await data.json();
@@ -64,7 +81,6 @@ function FoodInfo() {
 
     setMenuData(Menudata);
 
-    //  (TopPick);
   };
 
   useEffect(() => {
@@ -142,63 +158,38 @@ function FoodInfo() {
           </div>
 
           <div className="w-full pl-4 pr-5 mt-6">
-            <div className="flex justify-between items-center">
-              <h1 className="font-bold text-2xl text-[#161A1F]">
-                Deals for you
-              </h1>
 
-              <div className="flex gap-2">
-                <div
-                  style={{
-                    background:
-                      imageScroll === 0 || imageScroll <= 0
-                        ? "#E9E9EA"
-                        : "#D8D9DA",
-                  }}
-                  className="flex justify-center w-8 h-8 rounded-full"
-                >
-                  <button onClick={handlePrev}>
-                    <IoIosArrowRoundBack
-                      style={{
-                        color:
-                          imageScroll === 0 || imageScroll <= 0
-                            ? "#909194"
-                            : "#23262B",
-                      }}
-                      className="size-[1.7rem] "
-                    />
-                  </button>
-                </div>
+          <Heading 
+        text="Deals for you" 
+        textStyle={"text-xl"}
+        onPrev={handlePrev}
+        onNext={handleNext}
+        currentSlide={currentSlide}
+        totalItems={topPickData.length}
+        slidesToShow={settings.slidesToShow} 
+        />
 
-                <div
-                  style={{
-                    background:
-                      imageScroll === 405 || imageScroll >= 405
-                        ? "#E9E9EA"
-                        : "#D8D9DA",
-                  }}
-                  className="flex justify-center w-8 h-8 rounded-full"
-                >
-                  <button onClick={handleNext}>
-                    <IoIosArrowRoundForward
-                      style={{
-                        color:
-                          imageScroll === 405 || imageScroll >= 405
-                            ? "#909194"
-                            : "#23262B",
-                      }}
-                      className="size-[1.7rem] "
-                    />
-                  </button>
-                </div>
-              </div>
-            </div>
+            <div className=" overflow-hidden ">
 
-            <div className="w-full flex gap-4 overflow-hidden ">
+        <Slider ref={(slider) => setSlider(slider)} {...settings}>
+
               {offerData &&
-                offerData?.map((items, i) => (
-                  <DiscountCard key={i} data={items} />
-                ))}
+                offerData?.map((items, i) => 
+                  {
+                    return(
+
+                      < >
+                      <div className="" key={i}>
+                      <DiscountCard  data={items} />
+                      </div>
+                      </>
+                      
+                  
+                    )
+                  }
+                )}
+
+</Slider>
             </div>
           </div>
 
@@ -207,13 +198,16 @@ function FoodInfo() {
               MENU
             </h1>
 
+            <Link to={'/Search'} >
             <div className="w-full flex justify-center items-center cursor-pointer bg-[#F2F2F3] relative rounded-xl mt-4 p-3 ">
               <p className="text-[#626568] font-semibold text-center text-md ">
                 Search for dishes
               </p>
 
+
               <IoSearchOutline className="size-5 text-[#626568] mr-4 absolute right-0" />
             </div>
+            </Link>
           </div>
 
           {topPickData && <TopPicks resData = {resData} topPickData =  {topPickData} />  }

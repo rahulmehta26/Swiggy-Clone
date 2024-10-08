@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DishItemCard from "./DishItemCard";
 import Heading from "./Heading";
 import Slider from "react-slick";

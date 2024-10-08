@@ -17,7 +17,7 @@ function DiscountCard({data : {info}}) {
 
         <div>
 
-            <p className="text-[#161A1F] text-[1.05rem] font-[900] "> {info?.header} </p>
+            <p className="text-[#161A1F] line-clamp-1 text-[1.05rem] font-[900] "> {info?.header} </p>
 
             <p className="text-[#8D8F91] text-sm font-bold "> {info?.couponCode} </p>
         </div>

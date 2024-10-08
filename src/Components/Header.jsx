@@ -143,7 +143,7 @@ function Header() {
     if (value == "" || value == " ") return;
 
     const res = await fetch(
-      `https://www.swiggy.com/dapi/misc/place-autocomplete?input=${value}`
+      `${import.meta.env.VITE_BASE_URL}/misc/place-autocomplete?input=${value}`
     );
 
     const data = await res.json();
@@ -155,7 +155,7 @@ function Header() {
     if (id == "" || id == " ") return;
 
     const res = await fetch(
-      `https://www.swiggy.com/dapi/misc/address-recommend?place_id=${id}`
+      `${import.meta.env.VITE_BASE_URL}/misc/address-recommend?place_id=${id}`
     );
 
     const data = await res.json();

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Heading from './Heading';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';

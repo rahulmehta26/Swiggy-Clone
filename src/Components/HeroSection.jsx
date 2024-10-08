@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import DishName from "./DishName";
 import RestaurantName from "./RestaurantName";
 import OnlineRestaurant from "./OnlineRestaurant";
@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import SkeletonLoader from "./SkeletonLoader";
 import { setOfferData } from "../Redux/offerSlice";
 import Footer from "./Footer";
-import HoverCard from "./HoverCard";
 
 function HeroSection() {
   
@@ -30,7 +29,7 @@ function HeroSection() {
 
   const fetchData = async () => {
     const data = await fetch(
-      `https://www.swiggy.com/dapi/restaurants/list/v5?lat=${lat}&lng=${lng}&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING`
+      `${import.meta.env.VITE_BASE_URL}/restaurants/list/v5?lat=${lat}&lng=${lng}&is-seo-homepage-enabled=true&page_type=DESKTOP_WEB_LISTING`
     );
 
     const response = await data.json();

@@ -1,10 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
-import { signInWithPopup, signInWithRedirect, signOut } from "firebase/auth";
 import React, { useState } from "react";
-import { auth, provider } from "../Auth/firebaseAuth";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { addUserInfo, removeUserInfo } from "../Redux/authSlice";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { signinData } from "../Utils/utility";
 import { SiSwiggy } from "react-icons/si";
@@ -14,7 +11,6 @@ import { FaLocationPin } from "react-icons/fa6";
 import { GoLocation } from "react-icons/go";
 import { removeAddress } from "../Redux/addressSlice";
 import { nonVeg, veg } from "../image";
-import { placeOrder } from "../Redux/orderSlice";
 import useWindowSize from "./useWindowSize";
 
 const SigninPage = () => {

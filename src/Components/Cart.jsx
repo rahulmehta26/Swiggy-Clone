@@ -1,11 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
 /* eslint-disable use-isnan */
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { clearCartItem, deleteItem } from "../Redux/cartSlice";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { loginToggleReducer } from "../Redux/toggleSlice";
 import { MdOutlineAddLocationAlt } from "react-icons/md";
 import { GoLocation } from "react-icons/go";
