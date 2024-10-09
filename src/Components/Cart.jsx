@@ -116,7 +116,7 @@ function Cart() {
   };
 
   return (
-    <div className="w-full relative">
+    <div className="w-full h-screen relative">
       {cartData.length === 0 ? (
         <>
           <div className="w-full mt-28 flex flex-col items-center">
