@@ -11,8 +11,11 @@ import SearchPage from "./Components/SearchPage";
 import Offers from "./Components/Offers";
 import Help from "./Components/Help";
 import ErrorPage from "./Components/ErrorPage";
+import useCurrentLocation from "./Components/UseCurrentLocation";
 
 function App() {
+
+  useCurrentLocation()
 
   const isVisibile = useSelector((state) => state.toggleSlice.searchBarToggle )
 

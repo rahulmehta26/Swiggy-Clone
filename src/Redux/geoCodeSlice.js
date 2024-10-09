@@ -5,8 +5,8 @@ const geoCodeSlice = createSlice({
 
     name:'GeoCode',
     initialState:{
-        lat:"15.1393932",
-        lng:'76.9214428'
+        lat:null,
+        lng:null
 
     },
 

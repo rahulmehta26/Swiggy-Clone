@@ -58,11 +58,14 @@ function HeroSection() {
     setOnlineAddress(response?.data?.cards[2]?.card?.card?.title);
   };
 
-  dispatch(setOfferData(onlineResData))
-
   useEffect(() => {
     fetchData();
   }, [lat, lng]);
+
+  useEffect(() => {
+    dispatch(setOfferData(onlineResData));
+  }, [onlineResData, dispatch]);
+
 
   const filterValue = useSelector((state) => state.filterSlice.filterValue);
 
