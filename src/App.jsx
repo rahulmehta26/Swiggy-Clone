@@ -15,11 +15,15 @@ import useCurrentLocation from "./Components/UseCurrentLocation";
 
 function App() {
 
-  useCurrentLocation()
+  const { loading } = useCurrentLocation();
 
   const isVisibile = useSelector((state) => state.toggleSlice.searchBarToggle )
 
   const loginVisible = useSelector((state) => state.toggleSlice.loginToggle )
+
+  if (loading) {
+    return 
+  }
 
   return (
 
