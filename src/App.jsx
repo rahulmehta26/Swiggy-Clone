@@ -12,6 +12,7 @@ import Offers from "./Components/Offers";
 import Help from "./Components/Help";
 import ErrorPage from "./Components/ErrorPage";
 import useCurrentLocation from "./Components/UseCurrentLocation";
+import {SkeletonLoader} from "./Components/SkeletonLoader";
 
 function App() {
 
@@ -22,7 +23,7 @@ function App() {
   const loginVisible = useSelector((state) => state.toggleSlice.loginToggle )
 
   if (loading) {
-    return 
+    return <SkeletonLoader />
   }
 
   return (
