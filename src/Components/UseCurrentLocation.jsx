@@ -5,32 +5,29 @@ import { setGeoCode } from '../Redux/geoCodeSlice';
 
 const useCurrentLocation = () => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchLocation = () => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            dispatch(setGeoCode({ lat: latitude.toString(), lng: longitude.toString() }));
-            setLoading(false); 
-          },
-          (error) => {
-            toast.error('Unable to retrieve your location. Please try again.');
-            setLoading(false); r
-          }
-        );
-      } else {
-        toast.error('Geolocation is not supported by this browser.');
-        setLoading(false); 
-      }
+      
+      const hardcodedLocation = {
+        latitude: 12.9716, 
+        longitude: 77.5946, 
+      };
+
+      dispatch(
+        setGeoCode({
+          lat: hardcodedLocation.latitude.toString(),
+          lng: hardcodedLocation.longitude.toString(),
+        })
+      );
+      setLoading(false);
     };
 
     fetchLocation();
   }, [dispatch]);
 
-  return { loading }; 
+  return { loading };
 };
 
 export default useCurrentLocation;
